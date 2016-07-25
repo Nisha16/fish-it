@@ -14,6 +14,12 @@ var Catalyst = require('react-catalyst');
 
 var h = require('./helpers');
 
+/*
+Importing components
+*/
+import NotFound from './components/NotFound';
+import StorePicker from './components/StorePicker';
+
 //Firbase
 
 /*var Rebase = require('re-base');
@@ -187,6 +193,9 @@ var Header = React.createClass({
         <h3 className="tagline"> <span>{this.props.tagline} </span></h3>
       </header>
     )
+  },
+  propTypes : {
+    tagline : React.PropTypes.string.isRequired
   }
 });
 
@@ -205,10 +214,17 @@ var Order = React.createClass({
     }
     return (
       <li key={key}>
-        {count} lbs
-        {fish.name}
+      <CSSTransitionGroup
+        component='span'
+        transitionName='count'
+        transitionLeaveTimeout={250}
+        transitionEnterTimeout={250}
+        className='count'
+        >
+        <span key={count}>{count}</span>
+      </CSSTransitionGroup>
+        {fish.name} {removeButton}
         <span className='price'> {h.formatPrice(count * fish.price)} </span>
-        {removeButton}
       </li>
       )
   },
@@ -235,8 +251,8 @@ var Order = React.createClass({
           className='order' 
           component='ul'
           transitionName='order'
-          transitionEnterTimeout={500}
-          transitionLeaveTimeout={500}
+          transitionEnterTimeout={250}
+          transitionLeaveTimeout={250}
           >
           {orderIds.map(this.renderOrder)}
           <li className='total'>
@@ -246,6 +262,11 @@ var Order = React.createClass({
         </CSSTransitionGroup>
       </div>
     )
+  },
+  propTypes : {
+    fishes : React.PropTypes.object.isRequired,
+    order : React.PropTypes.object.isRequired,
+    removeFromOrder : React.PropTypes.func.isRequired
   }
 });
 
@@ -280,44 +301,17 @@ var Inventory = React.createClass({
         <button onClick={this.props.loadSamples}> Load Fish Samples</button>
       </div>
     )   
-  }
-});
-
-
-
-/*
-  StorePicker
-  this will let us create <StorePicker/>
-*/
-
-var StorePicker = React.createClass({
-  mixins : [History],
-  goToStore : function (event) {
-    event.preventDefault();
-    //get data from input
-    var storeId = this.refs.storeId.value;
-    this.history.pushState('null', '/store/' + storeId);
   },
-  render : function () {
-    return (
-      <form className="store-selector" onSubmit={this.goToStore}>
-        <h2>Please Enter A Store</h2>
-        <input type="text" ref="storeId" defaultValue={h.getFunName()} required/>
-        <input type="submit" />
-      </form>
-      )
+  propTypes : {
+    addFish : React.PropTypes.func.isRequired,
+    loadSamples : React.PropTypes.func.isRequired,
+    fishes : React.PropTypes.object.isRequired,
+    linkState : React.PropTypes.func.isRequired,
+    removeFish : React.PropTypes.func.isRequired
   }
 });
 
-/*
-  Not Found
-*/
 
-var NotFound = React.createClass({
-  render : function() {
-    return <h2> Not Found ! </h2>
-  }
-});
 
 
 /*
